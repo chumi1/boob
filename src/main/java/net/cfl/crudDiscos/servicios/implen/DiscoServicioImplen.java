@@ -22,6 +22,7 @@ public class DiscoServicioImplen implements DiscoServicio{
 	@Override
 	public DiscoDto crearDisco(DiscoDto discoDto) {
 		Disco disco = DiscoMapper.mapToDisco(discoDto);
+		//El metodo .save() de JPA guarda los datos en la base de datos
 		Disco discoGuardado = discoRepositorio.save(disco);
 		
 		return DiscoMapper.mapToDiscoDto(discoGuardado);
@@ -29,16 +30,36 @@ public class DiscoServicioImplen implements DiscoServicio{
 
 	@Override
 	public DiscoDto consultaDiscoPorId(Long discoId) {
+		//El metodo .finById devuelve los datos 
+		//contenidos en la entidad en donde coincida
+		//el id
 	 Disco disco= discoRepositorio.findById(discoId).orElseThrow(() -> new RecursoNoEncontrado("El disco no existe" + discoId));
 		return DiscoMapper.mapToDiscoDto(disco);
 	}
 	@Override
 	public List<DiscoDto> consultaTodosDiscos() {
+		//El metodo, findAll devuelve una LISTA de todos los datos contenidos
+		//en la base de datos;
 		List<Disco> discos = discoRepositorio.findAll();
 		return discos.stream().
 				map((disco) -> DiscoMapper.mapToDiscoDto(disco)).
 				collect(Collectors.toList());
 	}
 
+	@Override
+	public DiscoDto actualizaDisco(Long discoId, DiscoDto discoActualizado) {
+		Disco disco =discoRepositorio.findById(discoId).orElseThrow( () -> new RecursoNoEncontrado("El disco no existe" + discoId));
+		
+				disco.setArtista(discoActualizado.getArtista());
+				disco.setTitulo(discoActualizado.getTitulo());
+				disco.setDuracion(discoActualizado.getDuracion());
+				disco.setCod(discoActualizado.getCod());
+				
+				Disco discoActualizado00bj= discoRepositorio.save(disco);
+				
+				return DiscoMapper.mapToDiscoDto(discoActualizado00bj);
+	}
+
 
 }
+
